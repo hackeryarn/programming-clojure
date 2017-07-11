@@ -69,3 +69,71 @@
 (for [file "ABCDEFGH"
       rank (range 1 9)]
   (format "%c%d" file rank))
+
+(def x (for [i (range 1 3)] (do (println i) i)))
+
+(doall x)
+
+(first (.getBytes "hello"))
+
+(first (System/getProperties))
+
+(reverse "hello")
+
+(apply str (reverse "hello"))
+
+;; bad
+(let [m (re-matcher #"\w+" "the quick brown fox")]
+  (loop [match (re-find m)]
+    (when match
+      (println match)
+      (recur (re-find m)))))
+
+(sort (re-seq #"\w+" "the quick brown fox"))
+
+(drop 2 (re-seq #"\w+" "the quick brown fox"))
+
+(map clojure.string/upper-case (re-seq #"\w+" "the quick brown fox"))
+
+(import 'java.io.File)
+
+(seq (.listFiles (File. ".")))
+
+(map #(.getName %) (seq (.listFiles (File. "."))))
+
+(map #(.getName %) (.listFiles (File. ".")))
+
+(defn minutes-to-millis [mins] (* mins 1000 60))
+
+(defn recently-modified? [file]
+  (> (.lastModified file)
+     (- (System/currentTimeMillis) (minutes-to-millis 30))))
+
+(filter recently-modified? (file-seq (File. ".")))
+
+(require '[clojure.java.io :refer [reader]])
+
+(take 2 (line-seq (reader "primes.clj")))
+
+(with-open [rdr (reader "primes.clj")]
+  (count (line-seq rdr)))
+
+(with-open [rdr (reader "primes.clj")]
+  (count (filter #(re-find #"\S" %) (line-seq rdr))))
+
+(use '[clojure.java.io :only (reader)])
+(use '[clojure.string :only (blank?)])
+(defn non-blank? [line] (not (blank? line)))
+
+(defn non-git? [file] (not (.contains (.toString file) ".git")))
+
+(defn clojure-source? [file] (.endsWith (.toString file) ".clj"))
+
+(defn clojure-loc [base-file]
+  (reduce +
+          (for [file (file-seq base-file)
+                :when (and (clojure-source? file) (non-git? file))]
+            (with-open [rdr (reader file)]
+              (count (filter non-blank? (line-seq rdr)))))))
+
+(clojure-loc (java.io.File. "."))
