@@ -31,7 +31,7 @@
 
 (take 10 (filter even? whole-numbers))
 
-(def vowel? #{\a\e\i\o\u})
+(def vowel? #{\a \e \i \o \u})
 (def consonant? (complement vowel?))
 
 (take-while consonant? "the-quick-brown-fox")
@@ -137,3 +137,100 @@
               (count (filter non-blank? (line-seq rdr)))))))
 
 (clojure-loc (java.io.File. "."))
+
+(peek '(1 2 3))
+
+(pop '(1 2 3))
+
+(peek [1 2 3])
+
+(pop [1 2 3])
+
+([:a :b :c] 1)
+
+(assoc [0 1 2 3 4] 2 :two)
+
+(take 2 (drop 1 [1 2 3 4 5]))
+
+;; much faster
+(subvec [1 2 3 4 5] 3)
+
+(keys {:sundace "spaniel" :darwin "beagle"})
+
+(vals {:sundace "spaniel" :darwin "beagle"})
+
+(get {:sundace "spaniel" :darwin "beagle"} :darwin)
+
+(get {:sundace "spaniel" :darwin "beagle"} :snoopy)
+
+(:darwin {:sundace "spaniel" :darwin "beagle"})
+
+(:snoopy {:sundace "spaniel" :darwin "beagle"})
+
+(def score {:stu nil :joey 100})
+
+(:stu score)
+
+(contains? score :stu)
+
+(get score :stu :score-not-found)
+
+(get score :aaron :score-not-found)
+
+(def song {:name "Angus Dei"
+           :artist "Krzysztof Penderecki"
+           :album "Polish Requiem"
+           :genre "Classical"})
+
+(assoc song :kind "MPEG Audio File")
+
+(dissoc song :genre)
+
+(select-keys song [:name :artist])
+
+(merge song {:size 8118166 :time 507245})
+
+(merge-with
+ concat
+ {:rubble ["Barney"], :flinstone ["Fred"]}
+ {:rubble ["Betty"], :flinstone ["Wilma"]}
+ {:rubble ["Bam-Bam"], :flinstone ["Pebbles"]})
+
+(require '[clojure.set :as s])
+
+(def languages #{"java" "c" "d" "clojure"})
+(def beverages #{"java" "chai" "pop"})
+
+(s/union languages beverages)
+
+(s/difference languages beverages)
+
+(s/intersection languages beverages)
+
+(def compositions
+  #{{:name "The Art of the Fugue" :composet "J. S. Bach"}
+    {:name "Musical Offering" :composer "J. S. Bach"}
+    {:name "Requiem" :composer "Giuseppe Verdi"}
+    {:name "Requiem" :composer "W. A. Mozart"}})
+(def composers
+  #{{:composer "J. S. Bach" :country "Germany"}
+    {:composer "W. A. Mozart" :country "Austria"}
+    {:composer "Giuseppe Verdi" :country "Italy"}})
+(def nations
+  #{{:nation "Germany" :language "German"}
+    {:nation "Austria" :language "German"}
+    {:nation "Italy" :language "Italian"}})
+
+(s/rename compositions {:name :title})
+
+(s/select #(= (:name %) "Requiem") compositions)
+
+(s/project compositions [:name])
+
+(s/join compositions composers)
+
+(s/project
+ (s/join
+  (s/select #(= (:name %) "Requiem") compositions)
+  composers)
+ [:country])
