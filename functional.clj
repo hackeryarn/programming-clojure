@@ -129,3 +129,64 @@
 
 (defmethod replace-symbol :scalar [obj oldsym newsym]
   (if (= obj oldsym) newsym obj))
+
+
+(declare m f)
+
+(defn m [n]
+  (if (zero? n)
+    0
+    (- n (f (m (dec n))))))
+
+(defn f [n]
+  (if (zero? n)
+    1
+    (- n (m (f (dec n))))))
+
+(def m (memoize m))
+(def f (memoize f))
+
+(def m-seq (map m (iterate inc 0)))
+(def f-seq (map f (iterate inc 0)))
+
+(time (nth m-seq 10000))
+
+(defn square [x] (* x x))
+
+(defn sum-squares
+  [n]
+  (into [] (map square) (range n)))
+
+(defn preds-seq []
+  (->> (all-ns)
+       (map ns-publics)
+       (mapcat vals)
+       (filter #(clojure.string/ends-with? % "?"))
+       (map #(str (.-sym %)))
+       vec))
+
+(defn preds []
+  (into []
+        (comp (map ns-publics)
+           (mapcat vals)
+           (filter #(clojure.string/ends-with? % "?"))
+           (map #(str (.-sym %))))
+        (all-ns)))
+
+(defn non-blank? [s]
+  (not (clojure.string/blank? s)))
+
+(defn non-blank-lines-seq [file-name]
+  (let [reader (clojure.java.io/reader file-name)]
+    (filter non-blank? (line-seq reader))))
+
+(defn non-blank-lines [file-name]
+  (with-open [reader (clojure.java.io/reader file-name)]
+    (into [] (filter non-blank?) (line-seq reader))))
+
+(defn non-blank-lines-eduction [reader]
+  (eduction (filter non-blank?) (line-seq reader)))
+
+(defn line-count [file-name]
+  (with-open [reader (clojure.java.io/reader file-name)]
+    (reduce (fn [cnt el] (inc cnt)) 0 (non-blank-lines-eduction reader))))
