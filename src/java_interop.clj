@@ -1,9 +1,8 @@
 (ns java-interop
-  (:import [java.io File FilenameFilter]
-           [org.xml.sax InputSource]
-           [org.xml.sax.helpers DefaultHandler]
-           [java.io StringReader]
-           [javax.xml.parsers SAXParserFactory]))
+  (:import [java.io File FilenameFilter IOException StringReader]
+           javax.xml.parsers.SAXParserFactory
+           org.xml.sax.helpers.DefaultHandler
+           org.xml.sax.InputSource))
 
 (defn say-hi []
   (println "Hello from thread" (.getName (Thread/currentThread))))
@@ -41,3 +40,11 @@
 (demo-sax-parse "<foo>
 <bar> Body of bar</bar>
 </foo>" print-element-handler)
+
+(defn class-available? [class-name]
+  (Class/forName class-name))
+
+(defn class-available? [class-name]
+  (try
+    (Class/forName class-name) true
+    (catch ClassNotFoundException _ false)))
