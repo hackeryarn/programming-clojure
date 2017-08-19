@@ -20,4 +20,3 @@
       (doseq [address addresses]
         (println address ":" (available? address)))
       (Thread/sleep (* 1000 60)))))
-
