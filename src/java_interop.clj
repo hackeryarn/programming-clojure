@@ -48,3 +48,5 @@
   (try
     (Class/forName class-name) true
     (catch ClassNotFoundException _ false)))
+
+(class-available? "borg.util.Assimilate")
